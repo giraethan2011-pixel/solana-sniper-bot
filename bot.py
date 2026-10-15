@@ -1,6 +1,22 @@
 import time
 import requests
 import sqlite3
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+# Dummy server to pass Render's port check
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"Bot is active")
+
+def run_server():
+    server = HTTPServer(('0.0.0.0', 10000), SimpleHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_server, daemon=True).start()
 
 DB_PATH = "trading_signals.db"
 DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1560005057355849930/mZ9eZDL521L3rERi8izuiB_4hBxNNmUonV6LcMSUR62b-J5nK7V504xIsqEHh4cG53iR"
