@@ -2,7 +2,7 @@ import time
 import requests
 import sqlite3
 
-DB_PATH = "/Users/ethangiraneza/trading_signals.db"
+DB_PATH = "trading_signals.db"
 DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1560005057355849930/mZ9eZDL521L3rERi8izuiB_4hBxNNmUonV6LcMSUR62b-J5nK7V504xIsqEHh4cG53iR"
 
 MIN_LIQ = 10000
