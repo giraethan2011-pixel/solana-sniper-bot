@@ -21,10 +21,10 @@ threading.Thread(target=run_server, daemon=True).start()
 DB_PATH = "trading_signals.db"
 DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1560005057355849930/mZ9eZDL521L3rERi8izuiB_4hBxNNmUonV6LcMSUR62b-J5nK7V504xIsqEHh4cG53iR"
 
-MIN_LIQ = 10000
-MIN_VOL = 15000
-MIN_M5_CHANGE = 2.0
-MIN_M5_TXNS = 15
+MIN_LIQ = 2500
+MIN_VOL = 3000
+MIN_M5_CHANGE = 0.5
+MIN_M5_TXNS = 5
 
 conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 cursor = conn.cursor()
@@ -153,14 +153,14 @@ while True:
                 cursor.execute("UPDATE active_positions SET highest_price = ? WHERE token_address = ?", (highest, mint))
                 conn.commit()
 
-            if pnl_pct >= 50.0:
-                send_discord(f"🎯 **TAKE PROFIT HIT!**\nToken: **${sym}** hit **+{pnl_pct:.1f}%** profit! Time to secure gains on Axiom: https://axiom.trade/token/{mint}")
-                cursor.execute("UPDATE active_positions SET status = 'CLOSED_TP' WHERE token_address = ?", (mint,))
-                conn.commit()
-            elif pnl_pct <= -15.0:
-                send_discord(f"🛑 **STOP LOSS HIT!**\nToken: **${sym}** dropped to **{pnl_pct:.1f}%**. Cutting losses.")
-                cursor.execute("UPDATE active_positions SET status = 'CLOSED_SL' WHERE token_address = ?", (mint,))
-                conn.commit()
+if pnl_pct >= 50.0:
+            send_discord(f"🚀 **TAKE PROFIT HIT!**\nToken: **${sym}** hit +**{pnl_pct:.1f}%** profit! Secure gains on Axiom: https://axiom.trade/token/{mint}")
+            cursor.execute("UPDATE active_positions SET status = 'CLOSED_TP' WHERE token_address = ?", (mint,))
+            conn.commit()
+        elif pnl_pct <= -15.0:
+            send_discord(f"🔴 **STOP LOSS HIT!**\nToken: **${sym}** dropped to **{pnl_pct:.1f}%**. Cutting losses on Axiom: https://axiom.trade/token/{mint}")
+            cursor.execute("UPDATE active_positions SET status = 'CLOSED_SL' WHERE token_address = ?", (mint,))
+            conn.commit()
 
     except Exception as e:
         print(f"Loop error: {e}")
