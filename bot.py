@@ -153,14 +153,14 @@ while True:
                 cursor.execute("UPDATE active_positions SET highest_price = ? WHERE token_address = ?", (highest, mint))
                 conn.commit()
 
-if pnl_pct >= 50.0:
-            send_discord(f"🚀 **TAKE PROFIT HIT!**\nToken: **${sym}** hit +**{pnl_pct:.1f}%** profit! Secure gains on Axiom: https://axiom.trade/token/{mint}")
-            cursor.execute("UPDATE active_positions SET status = 'CLOSED_TP' WHERE token_address = ?", (mint,))
-            conn.commit()
-        elif pnl_pct <= -15.0:
-            send_discord(f"🔴 **STOP LOSS HIT!**\nToken: **${sym}** dropped to **{pnl_pct:.1f}%**. Cutting losses on Axiom: https://axiom.trade/token/{mint}")
-            cursor.execute("UPDATE active_positions SET status = 'CLOSED_SL' WHERE token_address = ?", (mint,))
-            conn.commit()
+            if pnl_pct >= 50.0:
+                send_discord(f"🚀 **TAKE PROFIT HIT!**\nToken: **${sym}** hit +**{pnl_pct:.1f}%** profit! Secure gains on Axiom: https://axiom.trade/token/{mint}")
+                cursor.execute("UPDATE active_positions SET status = 'CLOSED_TP' WHERE token_address = ?", (mint,))
+                conn.commit()
+            elif pnl_pct <= -15.0:
+                send_discord(f"🔴 **STOP LOSS HIT!**\nToken: **${sym}** dropped to **{pnl_pct:.1f}%**. Cutting losses on Axiom: https://axiom.trade/token/{mint}")
+                cursor.execute("UPDATE active_positions SET status = 'CLOSED_SL' WHERE token_address = ?", (mint,))
+                conn.commit()
 
     except Exception as e:
         print(f"Loop error: {e}")
